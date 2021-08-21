@@ -3,6 +3,9 @@
 	<fieldset name="general"
 		label="COM_STRIPELA_CONFIG_GENERAL_LABEL"
 		description="COM_STRIPELA_CONFIG_GENERAL_DESC">
+		<field name="stripe_secret_key"
+			label="COM_STRIPELA_CONFIG_STRIPE_SECRET_KEY_LABEL"
+			description="COM_STRIPELA_CONFIG_STRIPE_SECRET_KEY_DESC" />
 	</fieldset>
 
 	<fieldset name="permissions"
