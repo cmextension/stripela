@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Component\ComponentHelper;
 
+require_once __DIR__ . '/base.php';
+
 /**
  * Controller for payment intent.
  *
@@ -21,7 +23,7 @@ use Joomla\CMS\Component\ComponentHelper;
  * @subpackage  com_stripela
  * @since       1.0.0
  */
-class StripelaControllerPayment extends BaseController
+class StripelaControllerPayment extends StripelaControllerBase
 {
 	/**
 	 * Get payments.
@@ -30,7 +32,10 @@ class StripelaControllerPayment extends BaseController
 	 */
 	public function getPayments()
 	{
-		$response = null;
+		$data = [
+			'items'		=> [],
+			'has_more'	=> false,
+		];
 
 		$params = ComponentHelper::getParams('com_stripela');
 		$secretKey = $params->get('stripe_secret_key');
@@ -44,8 +49,29 @@ class StripelaControllerPayment extends BaseController
 
 			return false;
 		}
+
+		$payments = [];
+
+		if (count($response->data) > 0)
+		{
+			foreach ($response->data as $payment)
+			{
+				$payments[] = [
+					'id'			=> $payment->id,
+					'amount'		=> $payment->amount,
+					'currency'		=> $payment->currency,
+					'status'		=> $payment->status,
+					'description'	=> $payment->description,
+					'customer'		=> $payment->customer,
+					'created'		=> $payment->created,
+				];
+			}
+		}
+
+		$data['items'] = $payments;
+		$data['has_more'] = $response->has_more;
 		
-		echo new JsonResponse($response);
+		echo new JsonResponse($data);
 
 		return true;
 	}

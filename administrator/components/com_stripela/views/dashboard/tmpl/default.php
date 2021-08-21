@@ -11,6 +11,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
+HTMLHelper::_('jquery.framework');
 
 $doc = Factory::getDocument();
 $doc->addStyleSheet('https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css');
@@ -21,6 +24,7 @@ $doc->addScript('https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.m
 $doc->addScript('components/com_stripela/assets/js/stripela.js');
 
 $doc->addScriptDeclaration('var token = "' . Session::getFormToken() . '";');
+$doc->addScriptDeclaration('var componentRoute = "index.php?option=com_stripela&format=json";');
 
 $components = StripelaHelper::getComponents();
 
@@ -29,7 +33,7 @@ foreach ($components as $component)
 	echo $this->loadTemplate($component['layout']);
 }
 ?>
-<div id="stripela" v-cloak>
+<div id="stripela" v-cloak data-app>
 	<v-main>
 		<div class="router-view-container">
 			<router-view></router-view>
