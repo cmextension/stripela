@@ -2,7 +2,7 @@ var app;
 
 window.onload = function() {
   const routes = [
-    { path: '/orders', component: Orders },
+    { path: '/payments', component: Payments },
     { path: '/customers', component: Customers },
     { path: '/products', component: Products },
     { path: '/coupons', component: Coupons },
@@ -12,7 +12,7 @@ window.onload = function() {
     { path: '/invoices', component: Invoices },
     { path: '/plans', component: Plans },
     { path: '/subscriptions', component: Subscriptions },
-    { path: '*', component: Orders }
+    { path: '*', component: Payments }
   ]
   
   const router = new VueRouter({

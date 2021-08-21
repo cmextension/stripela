@@ -11,20 +11,20 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 ?>
 <script type="text/javascript">
-	var Orders = Vue.extend({
+	var Payments = Vue.extend({
 		data: function() {
 			return {
 				loading: true,
 			}
 		},
-		template: '#orders',
+		template: '#payments',
 		computed: {},
 		methods: {}
 	})
 </script>
-<script type="text/x-template" id="orders">
+<script type="text/x-template" id="payments">
 	<div>
-		<h2><?php echo Text::_('COM_STRIPELA_ORDERS') ; ?></h2>
+		<h2><?php echo Text::_('COM_STRIPELA_PAYMENTS') ; ?></h2>
 
 		<div v-show="loading" class="text-center">
 			<v-progress-circular indeterminate></v-progress-circular>

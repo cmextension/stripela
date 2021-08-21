@@ -24,10 +24,10 @@ class StripelaHelper
 		$components = [];
 
 		$components[] = [
-			'route'		=> '#/orders',
+			'route'		=> '#/payments',
 			'icon'		=> 'fa-copy',
-			'layout'	=> 'orders',
-			'name'		=> Text::_('COM_STRIPELA_ORDERS'),
+			'layout'	=> 'payments',
+			'name'		=> Text::_('COM_STRIPELA_PAYMENTS'),
 		];
 
 		$components[] = [
