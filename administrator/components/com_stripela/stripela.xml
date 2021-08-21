@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.9" method="upgrade">
+	<name>com_stripela</name>
+	<version>1.0.0</version>
+	<author>CMExtension</author>
+	<authorEmail>cmext.vn@gmail.com</authorEmail>
+	<authorUrl>www.cmextension.com</authorUrl>
+	<creationDate>August 2021</creationDate>
+	<copyright>(C) 2021 CMExtension</copyright>
+	<license>GNU General Public License version 2 or later</license>
+	<description>COM_STRIPELA_XML_DESCRIPTION</description>
+
+	<administration>
+		<menu>com_stripela</menu>
+
+		<files folder="admin">
+			<folder>assets</folder>
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>language</folder>
+			<folder>layouts</folder>
+			<folder>models</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
+			<filename>access.xml</filename>
+			<filename>stripela.php</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+		</files>
+	</administration>
+</extension>
+
