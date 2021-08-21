@@ -1,0 +1,11 @@
+[v-cloak] {
+    display:none;
+}
+
+.stripela-dropdown-menu li a:hover {
+    color: #fff;
+}
+
+.v-navigation-drawer .v-list-item__icon {
+    margin-right: 0.5em;
+}

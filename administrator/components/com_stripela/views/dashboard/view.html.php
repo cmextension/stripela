@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -47,6 +48,31 @@ class StripelaViewDashboard extends HtmlView
 	protected function addToolbar()
 	{
 		ToolbarHelper::title(Text::_('COM_STRIPELA_STRIPE'), 'dashboard');
+
+		$components = StripelaHelper::getComponents();
+		$bar = Toolbar::getInstance('toolbar');
+
+		$html = '<joomla-toolbar-button>';
+		$html .= '<div class="dropdown">';
+		$html .= '<button class="btn btn-primary" type="button" id="stripelaDropdown" data-bs-toggle="dropdown" aria-expanded="false">';
+		$html .= '<span class="icon-list icon-fw"></span> ' . Text::_('COM_STRIPELA_MENU');
+		$html .= '</button>';
+		$html .= '<ul class="dropdown-menu stripela-dropdown-menu" aria-labelledby="stripelaDropdown">';
+
+		foreach ($components as $component)
+		{
+			$html .= '<li>';
+			$html .= '<a class="dropdown-item" href="' . $component['route'] . '">';
+			$html .= '<span class="fas ' . $component['icon'] . ' fa-fw"></span> ' . $component['name'] . '</a>';
+			$html .= '</li>';
+		}
+
+		$html .= '</ul>';
+		$html .= '</div>';
+
+		$html .= '</joomla-toolbar-button>';
+
+		$bar->appendButton('Custom', $html, Text::_('COM_STRIPELA_MENU'));
 
 		if (Factory::getUser()->authorise('core.admin', 'com_stripela'))
 		{
