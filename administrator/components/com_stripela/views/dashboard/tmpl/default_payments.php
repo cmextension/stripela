@@ -73,12 +73,12 @@ use Joomla\CMS\Language\Text;
 				<template v-slot:default>
 					<thead>
 						<tr>
-							<th class="text-left">Amount</th>
+							<th class="text-left"><?php echo Text::_('COM_STRIPELA_AMOUNT'); ?></th>
 							<th></th>
 							<th></th>
-							<th class="text-left">Description</th>
-							<th class="text-left">Customer</th>
-							<th class="text-left">Created</th>
+							<th class="text-left"><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
+							<th class="text-left"><?php echo Text::_('COM_STRIPELA_CUSTOMER'); ?></th>
+							<th class="text-left"><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
 							<th></th>
 						</tr>
 					</thead>
