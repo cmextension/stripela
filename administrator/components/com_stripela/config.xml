@@ -6,6 +6,31 @@
 		<field name="stripe_secret_key"
 			label="COM_STRIPELA_CONFIG_STRIPE_SECRET_KEY_LABEL"
 			description="COM_STRIPELA_CONFIG_STRIPE_SECRET_KEY_DESC" />
+
+		<field name="date_format" type="list"
+			default="COM_STRIPELA_DATE_FORMAT_1" filter="options"
+			label="COM_STRIPELA_CONFIG_FIELD_DATE_FORMAT_LABEL">
+			<option value="COM_STRIPELA_DATE_FORMAT_1">2021/09/21</option>
+			<option value="COM_STRIPELA_DATE_FORMAT_2">2021-09-21</option>
+			<option value="COM_STRIPELA_DATE_FORMAT_3">21/09/2021</option>
+			<option value="COM_STRIPELA_DATE_FORMAT_4">21-09-2021</option>
+			<option value="COM_STRIPELA_DATE_FORMAT_5">09/21/2021</option>
+			<option value="COM_STRIPELA_DATE_FORMAT_6">09-21-2021</option>
+			<option value="COM_STRIPELA_DATE_FORMAT_7">21.09.2021</option>
+			<option value="COM_STRIPELA_DATE_FORMAT_8">2021.09.21</option>
+		</field>
+
+		<field name="time_format" type="list"
+			default="COM_STRIPELA_TIME_FORMAT_1" filter="options"
+			label="COM_STRIPELA_CONFIG_FIELD_TIME_FORMAT_LABEL">
+			<option value="COM_STRIPELA_TIME_FORMAT_1">01:00 am / 01:00 pm</option>
+			<option value="COM_STRIPELA_TIME_FORMAT_2">01:00 AM / 01:00 PM</option>
+			<option value="COM_STRIPELA_TIME_FORMAT_3">01:00 / 13:00</option>
+		</field>
+
+		<field name="limit" type="number" step="1" min="1" max="100" default="20"
+			label="COM_STRIPELA_CONFIG_LIMIT_LABEL"
+			description="COM_STRIPELA_CONFIG_LIMIT_DESC" />
 	</fieldset>
 
 	<fieldset name="permissions"

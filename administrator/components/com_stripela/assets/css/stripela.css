@@ -9,3 +9,7 @@
 .v-navigation-drawer .v-list-item__icon {
     margin-right: 0.5em;
 }
+
+.stripela-pagination {
+    margin: 1rem 0;
+}

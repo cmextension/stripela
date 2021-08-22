@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 require_once __DIR__ . '/base.php';
 
@@ -37,13 +38,28 @@ class StripelaControllerPayment extends StripelaControllerBase
 			'has_more'	=> false,
 		];
 
-		$params = ComponentHelper::getParams('com_stripela');
-		$secretKey = $params->get('stripe_secret_key');
+		$config = ComponentHelper::getParams('com_stripela');
+		$secretKey = $config->get('stripe_secret_key');
+		$limit = $config->get('limit', 20);
+
+		$startingAfter = $this->input->get('starting_after');
+		$endingBefore = $this->input->get('ending_before');
 
 		$stripe = new \Stripe\StripeClient($secretKey);
 
+		$params = [
+			'limit'		=> $limit,
+			'expand'	=> ['data.customer'],
+		];
+
+		if ($startingAfter)
+			$params['starting_after'] = $startingAfter;
+
+		if ($endingBefore)
+			$params['ending_before'] = $endingBefore;
+
 		try {
-			$response = $stripe->paymentIntents->all();
+			$response = $stripe->paymentIntents->all($params);
 		} catch (Exception $e) {
 			echo new JsonResponse(null, $e->getMessage(), true);
 
@@ -51,25 +67,72 @@ class StripelaControllerPayment extends StripelaControllerBase
 		}
 
 		$payments = [];
+		$newStartingAfter = '';
+		$newEndingBefore = '';
 
 		if (count($response->data) > 0)
 		{
+			$zeroDecimalCurrencies = StripelaHelper::getZeroDecimalCurrencies();
+
 			foreach ($response->data as $payment)
 			{
+				$customer = !empty($payment->customer['name']) ? $payment->customer['name'] : $payment->customer['email'];
+
+				$amount = in_array($payment->currency, $zeroDecimalCurrencies) ? $payment->amount : $payment->amount / 100;
+
+				// Will improve this later.
+				$amount = number_format($amount, 2, '.', ',');
+
 				$payments[] = [
-					'id'			=> $payment->id,
-					'amount'		=> $payment->amount,
-					'currency'		=> $payment->currency,
-					'status'		=> $payment->status,
-					'description'	=> $payment->description,
-					'customer'		=> $payment->customer,
-					'created'		=> $payment->created,
+					'id'				=> $payment->id,
+					'amount'			=> $amount,
+					'currency'			=> strtoupper($payment->currency),
+					'status'			=> $payment->status,
+					'status_formatted'	=> Text::_('COM_STRIPELA_PAYMENT_STATUS_' . strtoupper($payment->status)),
+					'description'		=> $payment->description,
+					'customer'			=> $customer,
+					'created'			=> HTMLHelper::_('stripela.date', $payment->created),
 				];
 			}
+
+			$first = $payments[0];
+			$last = $payments[count($payments) - 1];
+
+			// First page.
+			if (!$startingAfter && !$endingBefore)
+			{
+				$newStartingAfter = $last['id'];
+			}
+			else
+			{
+				// Go to next page.
+				if ($startingAfter)
+				{
+					if ($response->has_more)
+						$newStartingAfter = $last['id'];
+	
+					$newEndingBefore = $first['id'];
+				}
+	
+				// Go to previous page.
+				if ($endingBefore)
+				{
+					if ($response->has_more)
+						$newEndingBefore = $first['id'];
+	
+					$newStartingAfter = $last['id'];
+				}
+			}
+		}
+		else
+		{
+			if ($startingAfter)
+				$newEndingBefore = $startingAfter;
 		}
 
 		$data['items'] = $payments;
-		$data['has_more'] = $response->has_more;
+		$data['starting_after'] = $newStartingAfter;
+		$data['ending_before'] = $newEndingBefore;
 		
 		echo new JsonResponse($data);
 

@@ -19,6 +19,13 @@ use Joomla\CMS\Language\Text;
  */
 class StripelaHelper
 {
+	/**
+	 * Get Vue.js components.
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0.0
+	 */
 	public static function getComponents()
 	{
 		$components = [];
@@ -96,6 +103,31 @@ class StripelaHelper
 		return $components;
 	}
 
+	/**
+	 * Get Stripe's zero-decimal currencies.
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0.0
+	 */
+	public static function getZeroDecimalCurrencies()
+	{
+		return [
+			'bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw', 'mga',
+			'pyg', 'rwf', 'ugx', 'vnd', 'vuv', 'xaf', 'xof', 'xpf'
+		];
+	}
+
+	/**
+	 * Throw error based on Joomla! version.
+	 *
+	 * @param   string   $errorMessage  Error message.
+	 * @param   integer  $errorCode     Error code.
+	 *
+	 * @return  boolean
+	 *
+	 * @since   1.0.0
+	 */
 	public static function throwException($errorMessage, $errorCode)
 	{
 		if (version_compare(JVERSION, '4.0.0-alpha1', '<'))

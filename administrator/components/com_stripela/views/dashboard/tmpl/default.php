@@ -33,7 +33,7 @@ foreach ($components as $component)
 	echo $this->loadTemplate($component['layout']);
 }
 ?>
-<div id="stripela" v-cloak data-app>
+<div id="stripela" class="v-application" v-cloak data-app>
 	<v-main>
 		<div class="router-view-container">
 			<router-view></router-view>

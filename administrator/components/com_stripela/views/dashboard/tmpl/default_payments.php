@@ -16,16 +16,29 @@ use Joomla\CMS\Language\Text;
 			return {
 				loading: true,
 				payments: [],
+				starting_after: '',
+				ending_before: '',
 			}
 		},
 		template: '#payments',
 		computed: {},
 		methods: {
-			getPayments: function() {
+			getPayments: function($directionKey) {
 				let _this = this
+				let url = componentRoute + '&task=payment.getPayments&' + token + '=1'
+
+				// Go to previous page.
+				if ($directionKey == -1)
+					url +=  '&ending_before=' + _this.ending_before
+
+				// Go to next page.
+				if ($directionKey == 1)
+					url +=  '&starting_after=' + _this.starting_after
+
+				_this.loading = true
 
 				$.ajax({
-					url: componentRoute + '&task=payment.getPayments&' + token + '=1',
+					url: url,
 					dataType: 'json',
 					success: function(r) {
 						_this.loading = false
@@ -34,6 +47,8 @@ use Joomla\CMS\Language\Text;
 							return;
 
 						_this.payments = r.data.items
+						_this.starting_after = r.data.starting_after
+						_this.ending_before = r.data.ending_before
 					}
 				})
 			}
@@ -71,43 +86,40 @@ use Joomla\CMS\Language\Text;
 						<tr v-for="item in payments" :key="item.id">
 							<td>{{ item.amount }}</td>
 							<td>{{ item.currency }}</td>
-							<td>{{ item.status }}</td>
+							<td>
+								<span v-if="item.status === 'succeeded'" class="badge bg-success">
+									{{ item.status_formatted }}
+								</span>
+								<span v-else-if="item.status === 'canceled'" class="badge bg-danger">
+									{{ item.status_formatted }}
+								</span>
+								<span v-else class="badge bg-primary">
+									{{ item.status_formatted }}
+								</span>
+							</td>
 							<td>{{ item.description }}</td>
 							<td>{{ item.customer }}</td>
 							<td>{{ item.created }}</td>
 							<td>
-								<v-menu offset-x bottom left>
-									<template v-slot:activator="{ on, attrs }">
-										<v-btn
-											x-small
-											v-bind="attrs"
-											v-on="on"
-										>
-											<v-icon x-small>fas fa-ellipsis-h</v-icon>
-										</v-btn>
-									</template>
-									<v-list>
-										<v-list-item-group>
-											<v-list-item>
-												<v-list-item-title>Refund Payment</v-list-item-title>
-											</v-list-item>
-											<v-list-item>
-												<v-list-item-title>Send Receipt</v-list-item-title>
-											</v-list-item>
-											<v-list-item>
-												<v-list-item-title>View Customer</v-list-item-title>
-											</v-list-item>
-											<v-list-item>
-												<v-list-item-title>View Payment Details</v-list-item-title>
-											</v-list-item>
-										</v-list-item-group>
-									</v-list>
-								</v-menu>
+								<v-btn x-small :to="'/payments/' + item.id">
+									<v-icon x-small>fas fa-eye</v-icon>
+								</v-btn>
 							</td>
 						</tr>
 					</tbody>
 				</template>
 			</v-simple-table>
+
+			<div class="stripela-pagination float-right">
+					<v-btn v-if="ending_before" v-on:click="getPayments(-1)">
+						<v-icon>fas fa-chevron-left</v-icon>
+					</v-btn>
+
+					<v-btn v-if="starting_after" v-on:click="getPayments(1)">
+						<v-icon>fas fa-chevron-right</v-icon>
+					</v-btn>
+				</div>
+			</div>
 		</div>
 	</div>
 </script>
