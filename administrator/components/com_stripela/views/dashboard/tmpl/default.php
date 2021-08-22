@@ -12,8 +12,12 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Component\ComponentHelper;
 
 HTMLHelper::_('jquery.framework');
+
+$params = ComponentHelper::getParams('com_stripela');
+$dateFormat = Text::_($params->get('date_format', 'COM_STRIPELA_DATE_FORMAT_1'));
 
 $doc = Factory::getDocument();
 $doc->addStyleSheet('https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css');
@@ -24,6 +28,7 @@ $doc->addScript('https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.m
 $doc->addScript('components/com_stripela/assets/js/stripela.js');
 
 $doc->addScriptDeclaration('var token = "' . Session::getFormToken() . '";');
+$doc->addScriptDeclaration('var dateFormat = "' . Text::_($dateFormat) . '";');
 $doc->addScriptDeclaration('var componentRoute = "index.php?option=com_stripela&format=json";');
 
 $components = StripelaHelper::getComponents();

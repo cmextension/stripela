@@ -33,17 +33,18 @@ class StripelaControllerPayment extends StripelaControllerBase
 	 */
 	public function getPayments()
 	{
-		$data = [
-			'items'		=> [],
-			'has_more'	=> false,
-		];
+		$data = [];
 
 		$config = ComponentHelper::getParams('com_stripela');
 		$secretKey = $config->get('stripe_secret_key');
 		$limit = $config->get('limit', 20);
 
-		$startingAfter = $this->input->get('starting_after');
-		$endingBefore = $this->input->get('ending_before');
+		$input = $this->input;
+		$startingAfter = $input->get('starting_after');
+		$endingBefore = $input->get('ending_before');
+		$customerId = $input->get('customer_id');
+		$from = $input->get('from');
+		$to = $input->get('to');
 
 		$stripe = new \Stripe\StripeClient($secretKey);
 
@@ -57,6 +58,20 @@ class StripelaControllerPayment extends StripelaControllerBase
 
 		if ($endingBefore)
 			$params['ending_before'] = $endingBefore;
+
+		if ($customerId)
+			$params['customer'] = $customerId;
+
+		if ($from || $to)
+		{
+			$params['created'] = [];
+
+			if ($from)
+				$params['created']['gte'] = strtotime($from);
+
+			if ($to)
+				$params['created']['lte'] = strtotime($to . ' 23:59:59');
+		}
 
 		try {
 			$response = $stripe->paymentIntents->all($params);
@@ -99,7 +114,7 @@ class StripelaControllerPayment extends StripelaControllerBase
 			$last = $payments[count($payments) - 1];
 
 			// First page.
-			if (!$startingAfter && !$endingBefore)
+			if (!$startingAfter && !$endingBefore && $response->has_more)
 			{
 				$newStartingAfter = $last['id'];
 			}

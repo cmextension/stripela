@@ -13,3 +13,7 @@
 .stripela-pagination {
     margin: 1rem 0;
 }
+
+.v-icon.v-icon.fas {
+    font-size: inherit;
+}
