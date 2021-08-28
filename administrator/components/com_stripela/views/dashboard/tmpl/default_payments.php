@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 	var Payments = Vue.extend({
 		data: function() {
 			return {
-				loading: true,
+				loadingList: true,
 				payments: [],
 				starting_after: '',
 				ending_before: '',
@@ -24,9 +24,19 @@ use Joomla\CMS\Language\Text;
 				filter_customer: '',
 				filter_from: '',
 				filter_to: '',
+				dialog: false,
+				loadingDetail: true,
+				paymentDetailError: '',
+				payment: null,
 			}
 		},
 		template: '#payments',
+		watch: {
+			dialog: function(val) {
+				if (!val)
+					this.payment = null
+			}
+		},
 		computed: {
 			computedFromDateFormatted() {
 				return this.formatDate(this.filter_from)
@@ -84,13 +94,14 @@ use Joomla\CMS\Language\Text;
 				if (_this.filter_to)
 					url += '&to=' + _this.filter_to
 
-				_this.loading = true
+				_this.loadingList = true
 
 				$.ajax({
 					url: url,
+					method: 'GET',
 					dataType: 'json',
 					success: function(r) {
-						_this.loading = false
+						_this.loadingList = false
 
 						if (!r.success)
 							return
@@ -98,6 +109,29 @@ use Joomla\CMS\Language\Text;
 						_this.payments = r.data.items
 						_this.starting_after = r.data.starting_after
 						_this.ending_before = r.data.ending_before
+					}
+				})
+			},
+			getPaymentDetail: function(id) {
+				let url = componentRoute + '&task=payment.getPayment&' + token + '=1&id=' + id
+				this.loadingDetail = true
+				this.paymentDetailError = ''
+				this.dialog = true
+
+				let _this = this
+
+				$.ajax({
+					url: url,
+					method: 'GET',
+					dataType: 'json',
+					success: function(r) {
+						if (r.message)
+							_this.paymentDetailError = r.message
+
+						if (r.success && r.data)
+							_this.payment = r.data
+
+						_this.loadingDetail = false
 					}
 				})
 			}
@@ -113,11 +147,90 @@ use Joomla\CMS\Language\Text;
 
 		<v-divider></v-divider>
 
-		<div v-show="loading" class="text-center">
+		<div v-show="loadingList" class="text-center">
 			<v-progress-circular indeterminate></v-progress-circular>
 		</div>
 
-		<div v-show="!loading">
+		<div v-show="!loadingList">
+			<v-dialog
+				v-model="dialog"
+				width="600px"
+			>
+				<v-card>
+					<v-card-title>
+						<span class="text-h5" v-if="payment">{{ payment.id }}</span>
+					</v-card-title>
+					<v-card-text>
+						<v-alert
+							v-show="paymentDetailError"
+							type="error"
+							dense
+							outlined
+						>
+							{{ paymentDetailError }}
+						</v-alert>
+						<div v-show="loadingDetail" class="text-center">
+							<v-progress-circular indeterminate></v-progress-circular>
+						</div>
+
+						<v-simple-table v-if="payment !== null">
+							<template v-slot:default>
+							<tbody>
+								<tr>
+									<th>ID</th>
+									<td>{{ payment.id }}</td>
+								</tr>
+								<tr>
+									<th>Amount</th>
+									<td>{{ payment.currency + ' ' + payment.amount }}</td>
+								</tr>
+								<tr>
+									<th>Status</th>
+									<td>{{ payment.status_formatted }}</td>
+								</tr>
+								<tr>
+									<th>Created</th>
+									<td>{{ payment.created }}</td>
+								</tr>
+								<tr v-show="payment.customer">
+									<th>Customer</th>
+									<td>{{ payment.customer }}</td>
+								</tr>
+								<tr v-show="payment.payment_method">
+									<th>Payment Method</th>
+									<td>{{ payment.payment_method }}</td>
+								</tr>
+								<tr v-show="payment.statement_descriptor">
+									<th>Statement Descriptor</th>
+									<td>{{ payment.statement_descriptor }}</td>
+								</tr>
+								<tr v-show="payment.description">
+									<th>Description</th>
+									<td>{{ payment.description }}</td>
+								</tr>
+								<tr v-show="payment.canceled_at">
+									<th>Canceled At</th>
+									<td>{{ payment.canceled_at }}</td>
+								</tr>
+								<tr v-show="payment.cancellation_reason">
+									<th>Cancellation Reason</th>
+									<td>{{ payment.cancellation_reason }}</td>
+								</tr>
+							</tbody>
+							</template>
+						</v-simple-table>
+					</v-card-text>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn
+							@click="dialog = false"
+						>
+						Close
+						</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+
 			<v-row class="mb-2">
 				<v-col
 					class="pb-0"
@@ -246,7 +359,10 @@ use Joomla\CMS\Language\Text;
 							<td>{{ item.customer }}</td>
 							<td>{{ item.created }}</td>
 							<td>
-								<v-btn x-small :to="'/payments/' + item.id">
+								<v-btn
+									x-small
+									@click="getPaymentDetail(item.id)"
+								>
 									<v-icon x-small>fas fa-eye</v-icon>
 								</v-btn>
 							</td>

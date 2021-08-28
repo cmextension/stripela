@@ -36,4 +36,23 @@ abstract class JHtmlStripela
 
 		return HTMLHelper::_('date', $dateTime, $dateFormat . ' ' . $timeFormat);
 	}
+
+	/**
+	 * Format amount. Need improvement.
+	 *
+	 * @param   float|string  $amount    Amount.
+	 * @param   string        $currency  Currency code.
+	 *
+	 * @return  float  Formatted amount.
+	 *
+	 * @since   1.0.0
+	 */
+	public static function amount($amount, $currency)
+	{
+		$zeroDecimalCurrencies = StripelaHelper::getZeroDecimalCurrencies();
+		$amount = in_array($currency, $zeroDecimalCurrencies) ? $amount : $amount / 100;
+		$amount = number_format($amount, 2, '.', ',');
+
+		return $amount;
+	}
 }

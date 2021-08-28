@@ -92,11 +92,7 @@ class StripelaControllerPayment extends StripelaControllerBase
 			foreach ($response->data as $payment)
 			{
 				$customer = !empty($payment->customer['name']) ? $payment->customer['name'] : $payment->customer['email'];
-
-				$amount = in_array($payment->currency, $zeroDecimalCurrencies) ? $payment->amount : $payment->amount / 100;
-
-				// Will improve this later.
-				$amount = number_format($amount, 2, '.', ',');
+				$amount = HTMLHelper::_('stripela.amount', $payment->amount, $payment->currency);
 
 				$payments[] = [
 					'id'				=> $payment->id,
@@ -150,6 +146,73 @@ class StripelaControllerPayment extends StripelaControllerBase
 		$data['ending_before'] = $newEndingBefore;
 		
 		echo new JsonResponse($data);
+
+		return true;
+	}
+
+	/**
+	 * Get payment detail.
+	 *
+	 * @since  1.0.0
+	 */
+	public function getPayment()
+	{
+		$config = ComponentHelper::getParams('com_stripela');
+		$secretKey = $config->get('stripe_secret_key');
+
+		$input = $this->input;
+		$paymentId = $input->get('id');
+
+		if (empty($paymentId))
+		{
+			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PAYMENT_ID'), true);
+
+			return false;
+		}
+
+		$stripe = new \Stripe\StripeClient($secretKey);
+
+		try {
+			$r = $stripe->paymentIntents->retrieve($paymentId, [
+				'expand' => ['customer', 'payment_method']
+			]);
+		} catch (Exception $e) {
+			echo new JsonResponse(null, $e->getMessage(), true);
+
+			return false;
+		}
+
+		$amount = HTMLHelper::_('stripela.amount', $r->amount, $r->currency);
+
+		$paymentMethod = isset($r->payment_method->type) ?
+			Text::_('COM_STRIPELA_PAYMENT_METHOD_' . strtoupper($r->payment_method->type)) : '';
+		$customer = '';
+		$canceledAt = '';
+		
+		if (isset($r->customer->name))
+			$customer = $r->customer->name;
+		elseif (isset($r->customer->email))
+			$customer = $r->customer->email;
+
+		if ($r->canceled_at)
+			$canceledAt = HTMLHelper::_('stripela.date', $r->canceled_at);
+
+		$payment = [
+			'id'					=> $r->id,
+			'amount'				=> $amount,
+			'currency'				=> strtoupper($r->currency),
+			'status'				=> $r->status,
+			'status_formatted'		=> Text::_('COM_STRIPELA_PAYMENT_STATUS_' . strtoupper($r->status)),
+			'created'				=> HTMLHelper::_('stripela.date', $r->created),
+			'customer'				=> $customer,
+			'payment_method'		=> $paymentMethod,
+			'statement_descriptor'	=> $r->statement_descriptor,
+			'description'			=> $r->description,
+			'canceled_at'			=> $canceledAt,
+			'cancellation_reason'	=> $r->cancellation_reason,
+		];
+
+		echo new JsonResponse($payment);
 
 		return true;
 	}

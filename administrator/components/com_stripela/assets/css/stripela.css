@@ -17,3 +17,7 @@
 .v-icon.v-icon.fas {
     font-size: inherit;
 }
+
+.v-application {
+    z-index: 2000;
+}
