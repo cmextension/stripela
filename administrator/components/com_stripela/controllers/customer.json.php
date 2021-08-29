@@ -42,7 +42,7 @@ class StripelaControllerCustomer extends StripelaControllerBase
 		$input = $this->input;
 		$startingAfter = $input->get('starting_after');
 		$endingBefore = $input->get('ending_before');
-		$email = $input->get('email');
+		$email = $input->getEmail('email');
 
 		$stripe = new \Stripe\StripeClient($secretKey);
 
