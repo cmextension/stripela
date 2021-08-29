@@ -177,43 +177,43 @@ use Joomla\CMS\Language\Text;
 							<template v-slot:default>
 							<tbody>
 								<tr>
-									<th>ID</th>
+									<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
 									<td>{{ payment.id }}</td>
 								</tr>
 								<tr>
-									<th>Amount</th>
+									<th><?php echo Text::_('COM_STRIPELA_AMOUNT'); ?></th>
 									<td>{{ payment.currency + ' ' + payment.amount }}</td>
 								</tr>
 								<tr>
-									<th>Status</th>
+									<th><?php echo Text::_('COM_STRIPELA_STATUS'); ?></th>
 									<td>{{ payment.status_formatted }}</td>
 								</tr>
 								<tr>
-									<th>Created</th>
+									<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
 									<td>{{ payment.created }}</td>
 								</tr>
 								<tr v-show="payment.customer">
-									<th>Customer</th>
+									<th><?php echo Text::_('COM_STRIPELA_CUSTOMER'); ?></th>
 									<td>{{ payment.customer }}</td>
 								</tr>
 								<tr v-show="payment.payment_method">
-									<th>Payment Method</th>
+									<th><?php echo Text::_('COM_STRIPELA_PAYMENT_METHOD'); ?></th>
 									<td>{{ payment.payment_method }}</td>
 								</tr>
 								<tr v-show="payment.statement_descriptor">
-									<th>Statement Descriptor</th>
+									<th><?php echo Text::_('COM_STRIPELA_STATEMENT_DESCRIPTOR'); ?></th>
 									<td>{{ payment.statement_descriptor }}</td>
 								</tr>
 								<tr v-show="payment.description">
-									<th>Description</th>
+									<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
 									<td>{{ payment.description }}</td>
 								</tr>
 								<tr v-show="payment.canceled_at">
-									<th>Canceled At</th>
+									<th><?php echo Text::_('COM_STRIPELA_CANCELED_AT'); ?></th>
 									<td>{{ payment.canceled_at }}</td>
 								</tr>
 								<tr v-show="payment.cancellation_reason">
-									<th>Cancellation Reason</th>
+									<th><?php echo Text::_('COM_STRIPELA_CANCELATION_REASON'); ?></th>
 									<td>{{ payment.cancellation_reason }}</td>
 								</tr>
 							</tbody>
@@ -225,7 +225,7 @@ use Joomla\CMS\Language\Text;
 						<v-btn
 							@click="dialog = false"
 						>
-						Close
+							<?php echo Text::_('COM_STRIPELA_CLOSE'); ?>
 						</v-btn>
 					</v-card-actions>
 				</v-card>

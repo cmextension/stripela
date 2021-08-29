@@ -158,7 +158,7 @@ use Joomla\CMS\Language\Text;
 							<template v-slot:default>
 							<tbody>
 								<tr>
-									<th>ID</th>
+									<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
 									<td>{{ customer.id }}</td>
 								</tr>
 								<tr v-show="customer.name">
