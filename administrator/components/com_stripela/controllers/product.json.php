@@ -27,6 +27,73 @@ require_once __DIR__ . '/base.php';
 class StripelaControllerProduct extends StripelaControllerBase
 {
 	/**
+	 * Get product's pricing.
+	 *
+	 * @param   object   Stripe\Product object.
+	 * @param   object   Stripe object.
+	 * 
+	 * @return  array
+	 * 
+	 * @since   1.0.0
+	 */
+	private function __getPricing($product, $stripe)
+	{
+		$info = [];
+		$prices = $stripe->prices->all(['product' => $product->id, 'expand' => ['data.tiers']]);
+
+		foreach ($prices->autoPagingIterator() as $i)
+		{
+			if ($i->billing_scheme == 'per_unit')
+			{
+				// Package pricing.
+				if ($i->transform_quantity)
+				{
+					if ($i->recurring)
+					{
+						$info[] = HTMLHelper::_('stripela.recurring_package_info',
+							$i->unit_amount,
+							$i->currency,
+							$i->transform_quantity->divide_by,
+							$i->recurring->interval_count,
+							$i->recurring->interval);
+					}
+					else
+					{
+						$info[] = HTMLHelper::_('stripela.package_info',
+							$i->unit_amount,
+							$i->currency,
+							$i->transform_quantity->divide_by);
+					}
+				}
+				else
+				{
+					$info[] = HTMLHelper::_('stripela.amount', $i->unit_amount, $i->currency, true);
+				}
+			}
+			elseif ($i->billing_scheme == 'tiered')
+			{
+				$tiers = $i->tiers;
+
+				if (count($tiers) > 1)
+				{
+					usort($tiers, function($a, $b) {
+						return $a->unit_amount > $b->unit_amount;
+					});
+				}
+
+				$info[] = HTMLHelper::_('stripela.tier_info',
+					$tiers[0]->unit_amount,
+					$tiers[0]->flat_amount,
+					$i->currency,
+					$i->recurring->interval_count,
+					$i->recurring->interval);
+			}
+		}
+
+		return $info;
+	}
+
+	/**
 	 * Get products.
 	 *
 	 * @since  1.0.0
@@ -70,66 +137,13 @@ class StripelaControllerProduct extends StripelaControllerBase
 		{
 			foreach ($response->data as $p)
 			{
-				$product = [
-					'id'			=> $p->id,
-					'name'			=> $p->name,
-					'created'		=> HTMLHelper::_('stripela.date', $p->created),
-					'updated'		=> HTMLHelper::_('stripela.date', $p->updated),
-					'price_info'	=> [],
+				$products[] = [
+					'id'		=> $p->id,
+					'name'		=> $p->name,
+					'created'	=> HTMLHelper::_('stripela.date', $p->created),
+					'updated'	=> HTMLHelper::_('stripela.date', $p->updated),
+					'pricing'	=> $this->__getPricing($p, $stripe),
 				];
-
-				$prices = $stripe->prices->all(['product' => $p->id, 'expand' => ['data.tiers']]);
-
-				foreach ($prices->autoPagingIterator() as $i)
-				{
-					if ($i->billing_scheme == 'per_unit')
-					{
-						// Package pricing.
-						if ($i->transform_quantity)
-						{
-							if ($i->recurring)
-							{
-								$product['price_info'][] = HTMLHelper::_('stripela.recurring_package_info',
-									$i->unit_amount,
-									$i->currency,
-									$i->transform_quantity->divide_by,
-									$i->recurring->interval_count,
-									$i->recurring->interval);
-							}
-							else
-							{
-								$product['price_info'][] = HTMLHelper::_('stripela.package_info',
-									$i->unit_amount,
-									$i->currency,
-									$i->transform_quantity->divide_by);
-							}
-						}
-						else
-						{
-							$product['price_info'][] = HTMLHelper::_('stripela.amount', $i->unit_amount, $i->currency, true);
-						}
-					}
-					elseif ($i->billing_scheme == 'tiered')
-					{
-						$tiers = $i->tiers;
-
-						if (count($tiers) > 1)
-						{
-							usort($tiers, function($a, $b) {
-								return $a->unit_amount > $b->unit_amount;
-							});
-						}
-
-						$product['price_info'][] = HTMLHelper::_('stripela.tier_info',
-							$tiers[0]->unit_amount,
-							$tiers[0]->flat_amount,
-							$i->currency,
-							$i->recurring->interval_count,
-							$i->recurring->interval);
-					}
-				}
-
-				$products[] = $product;
 			}
 
 			$first = $products[0];
@@ -212,7 +226,8 @@ class StripelaControllerProduct extends StripelaControllerBase
 			'description'	=> $p->description,
 			'metadata'		=> $p->metadata,
 			'images'		=> $p->images,
-			'url'			=> $p->url,
+			'shippable'		=> $p->shippable,
+			'pricing'		=> $this->__getPricing($p, $stripe),
 			'created'		=> HTMLHelper::_('stripela.date', $p->created),
 			'updated'		=> HTMLHelper::_('stripela.date', $p->updated),
 		];

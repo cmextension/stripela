@@ -164,13 +164,55 @@ use Joomla\CMS\Language\Text;
 									<th><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
 									<td>{{ product.name }}</td>
 								</tr>
-								<tr v-show="product.active">
+								<tr v-show="product.description">
+									<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
+									<td>{{ product.description }}</td>
+								</tr>
+								<tr v-show="product.images.length > 0">
+									<th><?php echo Text::_('COM_STRIPELA_IMAGES'); ?></th>
+									<td>
+										<div v-for="i in product.images">
+											<v-img v-bind:src="i" :width="150"></v-img>
+										</div>
+									</td>
+								</tr>
+								<tr v-show="product.metadata.length > 0">
+									<th><?php echo Text::_('COM_STRIPELA_METADATA'); ?></th>
+									<td>
+										<div v-for="(value, key) in product.metadata">
+											{{ key }}: {{ value }}
+										</div>
+									</td>
+								</tr>
+								<tr v-show="product.pricing.length > 0">
+									<th><?php echo Text::_('COM_STRIPELA_PRICING'); ?></th>
+									<td>
+										<div v-for="(p, index) in product.pricing">
+											{{ p }}
+										</div>
+									</td>
+								</tr>
+								<tr>
 									<th><?php echo Text::_('COM_STRIPELA_ACTIVE'); ?></th>
-									<td>{{ product.active }}</td>
+									<td>
+										<v-icon v-if="product.active">fas fa-check</v-icon>
+										<v-icon v-else>fas fa-times</v-icon>
+									</td>
+								</tr>
+								<tr>
+									<th><?php echo Text::_('COM_STRIPELA_SHIPPABLE'); ?></th>
+									<td>
+										<v-icon v-if="product.shippable">fas fa-check</v-icon>
+										<v-icon v-else>fas fa-times</v-icon>
+									</td>
 								</tr>
 								<tr>
 									<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
 									<td>{{ product.created }}</td>
+								</tr>
+								<tr>
+									<th><?php echo Text::_('COM_STRIPELA_UPDATED'); ?></th>
+									<td>{{ product.updated }}</td>
 								</tr>
 							</tbody>
 							</template>
@@ -227,7 +269,7 @@ use Joomla\CMS\Language\Text;
 					<thead>
 						<tr>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
-							<th class="text-left"><?php echo Text::_('COM_STRIPELA_PRICE'); ?></th>
+							<th class="text-left"><?php echo Text::_('COM_STRIPELA_PRICING'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_UPDATED'); ?></th>
 							<th></th>
@@ -236,7 +278,11 @@ use Joomla\CMS\Language\Text;
 					<tbody>
 						<tr v-for="item in products" :key="item.id">
 							<td>{{ item.name }}</td>
-							<td><div v-for="(i, index) in item.price_info">{{ i }}</div></td>
+							<td>
+								<div v-for="(p, index) in item.pricing">
+									{{ p }}
+								</div>
+							</td>
 							<td>{{ item.created }}</td>
 							<td>{{ item.updated }}</td>
 							<td>
