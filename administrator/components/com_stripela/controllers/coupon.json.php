@@ -18,20 +18,20 @@ use Joomla\CMS\HTML\HTMLHelper;
 require_once __DIR__ . '/base.php';
 
 /**
- * Controller for customer.
+ * Controller for coupon.
  *
  * @package     Stripela
  * @subpackage  com_stripela
  * @since       1.0.0
  */
-class StripelaControllerCustomer extends StripelaControllerBase
+class StripelaControllerCoupon extends StripelaControllerBase
 {
 	/**
-	 * Get customers.
+	 * Get coupons.
 	 *
 	 * @since  1.0.0
 	 */
-	public function getCustomers()
+	public function getCoupons()
 	{
 		$data = [];
 
@@ -42,11 +42,15 @@ class StripelaControllerCustomer extends StripelaControllerBase
 		$input = $this->input;
 		$startingAfter = $input->get('starting_after');
 		$endingBefore = $input->get('ending_before');
-		$email = $input->getEmail('email');
+		$from = $input->get('from');
+		$to = $input->get('to');
 
 		$stripe = new \Stripe\StripeClient($secretKey);
 
-		$params = ['limit' => $limit];
+		$params = [
+			'limit'		=> $limit,
+			'expand'	=> ['data.applies_to'],
+		];
 
 		if ($startingAfter)
 			$params['starting_after'] = $startingAfter;
@@ -54,43 +58,64 @@ class StripelaControllerCustomer extends StripelaControllerBase
 		if ($endingBefore)
 			$params['ending_before'] = $endingBefore;
 
-		if ($email)
-			$params['email'] = $email;
+		if ($from || $to)
+		{
+			$params['created'] = [];
+
+			if ($from)
+				$params['created']['gte'] = strtotime($from);
+
+			if ($to)
+				$params['created']['lte'] = strtotime($to . ' 23:59:59');
+		}
 
 		try {
-			$response = $stripe->customers->all($params);
+			$response = $stripe->coupons->all($params);
 		} catch (Exception $e) {
 			echo new JsonResponse(null, $e->getMessage(), true);
 
 			return false;
 		}
 
-		$customers = [];
+		$coupons = [];
 		$newStartingAfter = '';
 		$newEndingBefore = '';
 
 		if (count($response->data) > 0)
 		{
-			foreach ($response->data as $customer)
+			foreach ($response->data as $coupon)
 			{
-				$customers[] = [
-					'id'			=> $customer->id,
-					'name'			=> $customer->name,
-					'created'		=> HTMLHelper::_('stripela.date', $customer->created),
-					'description'	=> $customer->description,
-					'email'			=> $customer->email,
+				$terms = HTMLHelper::_('stripela.terms',
+					$coupon->amount_off,
+					$coupon->percent_off,
+					$coupon->currency,
+					$coupon->duration,
+					$coupon->duration_in_months,
+				);
+
+				$redeemBy = $coupon->redeem_by ? HTMLHelper::_('stripela.date', $coupon->redeem_by) : null;
+
+				$coupons[] = [
+					'id'				=> $coupon->id,
+					'name'				=> $coupon->name,
+					'terms'				=> $terms,
+					'max_redemptions'	=> $coupon->max_redemptions,
+					'redeem_by'			=> $redeemBy,
+					'created'			=> HTMLHelper::_('stripela.date', $coupon->created),
 				];
 			}
 
-			$first = $customers[0];
-			$last = $customers[count($customers) - 1];
+			$first = $coupons[0];
+			$last = $coupons[count($coupons) - 1];
 
+			// First page.
 			if (!$startingAfter && !$endingBefore && $response->has_more)
 			{
 				$newStartingAfter = $last['id'];
 			}
 			else
 			{
+				// Go to next page.
 				if ($startingAfter)
 				{
 					if ($response->has_more)
@@ -99,6 +124,7 @@ class StripelaControllerCustomer extends StripelaControllerBase
 					$newEndingBefore = $first['id'];
 				}
 	
+				// Go to previous page.
 				if ($endingBefore)
 				{
 					if ($response->has_more)
@@ -114,7 +140,7 @@ class StripelaControllerCustomer extends StripelaControllerBase
 				$newEndingBefore = $startingAfter;
 		}
 
-		$data['items'] = $customers;
+		$data['items'] = $coupons;
 		$data['starting_after'] = $newStartingAfter;
 		$data['ending_before'] = $newEndingBefore;
 		
@@ -124,21 +150,21 @@ class StripelaControllerCustomer extends StripelaControllerBase
 	}
 
 	/**
-	 * Get customer detail.
+	 * Get coupon detail.
 	 *
 	 * @since  1.0.0
 	 */
-	public function getCustomer()
+	public function getCoupon()
 	{
 		$config = ComponentHelper::getParams('com_stripela');
 		$secretKey = $config->get('stripe_secret_key');
 
 		$input = $this->input;
-		$customerId = $input->get('id');
+		$couponId = $input->get('id');
 
-		if (empty($customerId))
+		if (empty($couponId))
 		{
-			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_CUSTOMER_IDS'), true);
+			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_COUPON_IDS'), true);
 
 			return false;
 		}
@@ -146,25 +172,33 @@ class StripelaControllerCustomer extends StripelaControllerBase
 		$stripe = new \Stripe\StripeClient($secretKey);
 
 		try {
-			$r = $stripe->customers->retrieve($customerId);
+			$r = $stripe->coupons->retrieve($couponId);
 		} catch (Exception $e) {
 			echo new JsonResponse(null, $e->getMessage(), true);
 
 			return false;
 		}
 
-		$customer = [
-			'id'			=> $r->id,
-			'name'			=> $r->name,
-			'email'			=> $r->email,
-			'currency'		=> strtoupper($r->currency),
-			'created'		=> HTMLHelper::_('stripela.date', $r->created),
-			'description'	=> $r->description,
-			'phone'			=> $r->phone,
-			'address'		=> $r->address,
+		$terms = HTMLHelper::_('stripela.terms',
+			$r->amount_off,
+			$r->percent_off,
+			$r->currency,
+			$r->duration,
+			$r->duration_in_months,
+		);
+
+		$redeemBy = $r->redeem_by ? HTMLHelper::_('stripela.date', $r->redeem_by) : null;
+
+		$coupon = [
+			'id'				=> $r->id,
+			'name'				=> $r->name,
+			'terms'				=> $terms,
+			'max_redemptions'	=> $r->max_redemptions,
+			'redeem_by'			=> $redeemBy,
+			'created'			=> HTMLHelper::_('stripela.date', $r->created),
 		];
 
-		echo new JsonResponse($customer);
+		echo new JsonResponse($coupon);
 
 		return true;
 	}

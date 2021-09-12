@@ -165,7 +165,7 @@ class StripelaControllerPayment extends StripelaControllerBase
 
 		if (empty($paymentId))
 		{
-			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PAYMENT_ID'), true);
+			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PAYMENT_IDS'), true);
 
 			return false;
 		}

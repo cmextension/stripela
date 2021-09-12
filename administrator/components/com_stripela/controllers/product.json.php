@@ -202,7 +202,7 @@ class StripelaControllerProduct extends StripelaControllerBase
 
 		if (empty($id))
 		{
-			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PRODUCT_ID'), true);
+			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PRODUCT_IDS'), true);
 
 			return false;
 		}

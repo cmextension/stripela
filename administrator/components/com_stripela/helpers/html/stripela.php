@@ -136,4 +136,40 @@ abstract class JHtmlStripela
 
 		return Text::sprintf('COM_STRIPELA_RECURRING_PACKAGE_INFO', $unitPrice, $group, $intervalStr);
 	}
+
+	/**
+	 * Show recurring package pricing info.
+	 *
+	 * @param   interger|null   $amountOff          Amount taken off subtotal of invoice.
+	 * @param   float|null      $percentOff         Percent taken off subtotal of invoice.
+	 * @param   string          $currency           Currency code.
+	 * @param   string          $duration           "once", "repeating" or "forever"
+	 * @param   integer         $durationInMonths   Number of months.
+	 *
+	 * @return  string
+	 *
+	 * @since   1.0.0
+	 */
+	public static function terms($amountOff, $percentOff, $currency, $duration, $durationInMonths)
+	{
+		$terms = ($amountOff === null) ? $percentOff . '%' : self::amount($amountOff, $currency, true);
+
+		if ($duration == 'repeating')
+		{
+			if ($durationInMonths > 1)
+				$terms = Text::sprintf('COM_STRIPELA_COUPON_TERMS_REPEATING', $terms, $durationInMonths);
+			else
+				$terms = Text::sprintf('COM_STRIPELA_COUPON_TERMS_REPEATING_1', $terms);
+		}
+		elseif ($duration == 'once')
+		{
+			$terms = Text::sprintf('COM_STRIPELA_COUPON_TERMS_ONCE', $terms);
+		}
+		elseif ($duration == 'forever')
+		{
+			$terms = Text::sprintf('COM_STRIPELA_COUPON_TERMS_FOREVER', $terms);
+		}
+
+		return $terms;
+	}
 }
