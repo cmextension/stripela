@@ -153,7 +153,7 @@ use Joomla\CMS\Language\Text;
 							<v-progress-circular indeterminate></v-progress-circular>
 						</div>
 
-						<v-simple-table v-if="product !== null">
+						<v-simple-table v-if="product">
 							<template v-slot:default>
 							<tbody>
 								<tr>
@@ -299,11 +299,11 @@ use Joomla\CMS\Language\Text;
 			</v-simple-table>
 
 			<div class="stripela-pagination float-right">
-				<v-btn v-if="ending_before" v-on:click="getProducts(-1)">
+				<v-btn v-show="ending_before" v-on:click="getProducts(-1)">
 					<v-icon>fas fa-chevron-left</v-icon>
 				</v-btn>
 
-				<v-btn v-if="starting_after" v-on:click="getProducts(1)">
+				<v-btn v-show="starting_after" v-on:click="getProducts(1)">
 					<v-icon>fas fa-chevron-right</v-icon>
 				</v-btn>
 			</div>
