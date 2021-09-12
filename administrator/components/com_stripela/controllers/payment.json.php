@@ -182,7 +182,7 @@ class StripelaControllerPayment extends StripelaControllerBase
 			return false;
 		}
 
-		$amount = HTMLHelper::_('stripela.amount', $r->amount, $r->currency);
+		$amount = HTMLHelper::_('stripela.amount', $r->amount, $r->currency, true);
 
 		$paymentMethod = isset($r->payment_method->type) ?
 			Text::_('COM_STRIPELA_PAYMENT_METHOD_' . strtoupper($r->payment_method->type)) : '';

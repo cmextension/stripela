@@ -182,7 +182,7 @@ use Joomla\CMS\Language\Text;
 								</tr>
 								<tr>
 									<th><?php echo Text::_('COM_STRIPELA_AMOUNT'); ?></th>
-									<td>{{ payment.currency + ' ' + payment.amount }}</td>
+									<td>{{ payment.amount }}</td>
 								</tr>
 								<tr>
 									<th><?php echo Text::_('COM_STRIPELA_STATUS'); ?></th>
