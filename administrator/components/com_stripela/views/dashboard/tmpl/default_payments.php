@@ -175,48 +175,48 @@ use Joomla\CMS\Language\Text;
 
 						<v-simple-table v-if="payment !== null">
 							<template v-slot:default>
-							<tbody>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
-									<td>{{ payment.id }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_AMOUNT'); ?></th>
-									<td>{{ payment.amount }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_STATUS'); ?></th>
-									<td>{{ payment.status_formatted }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
-									<td>{{ payment.created }}</td>
-								</tr>
-								<tr v-show="payment.customer">
-									<th><?php echo Text::_('COM_STRIPELA_CUSTOMER'); ?></th>
-									<td>{{ payment.customer }}</td>
-								</tr>
-								<tr v-show="payment.payment_method">
-									<th><?php echo Text::_('COM_STRIPELA_PAYMENT_METHOD'); ?></th>
-									<td>{{ payment.payment_method }}</td>
-								</tr>
-								<tr v-show="payment.statement_descriptor">
-									<th><?php echo Text::_('COM_STRIPELA_STATEMENT_DESCRIPTOR'); ?></th>
-									<td>{{ payment.statement_descriptor }}</td>
-								</tr>
-								<tr v-show="payment.description">
-									<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
-									<td>{{ payment.description }}</td>
-								</tr>
-								<tr v-show="payment.canceled_at">
-									<th><?php echo Text::_('COM_STRIPELA_CANCELED_AT'); ?></th>
-									<td>{{ payment.canceled_at }}</td>
-								</tr>
-								<tr v-show="payment.cancellation_reason">
-									<th><?php echo Text::_('COM_STRIPELA_CANCELATION_REASON'); ?></th>
-									<td>{{ payment.cancellation_reason }}</td>
-								</tr>
-							</tbody>
+								<tbody>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
+										<td>{{ payment.id }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_AMOUNT'); ?></th>
+										<td>{{ payment.amount }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_STATUS'); ?></th>
+										<td>{{ payment.status_formatted }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
+										<td>{{ payment.created }}</td>
+									</tr>
+									<tr v-show="payment.customer">
+										<th><?php echo Text::_('COM_STRIPELA_CUSTOMER'); ?></th>
+										<td>{{ payment.customer }}</td>
+									</tr>
+									<tr v-show="payment.payment_method">
+										<th><?php echo Text::_('COM_STRIPELA_PAYMENT_METHOD'); ?></th>
+										<td>{{ payment.payment_method }}</td>
+									</tr>
+									<tr v-show="payment.statement_descriptor">
+										<th><?php echo Text::_('COM_STRIPELA_STATEMENT_DESCRIPTOR'); ?></th>
+										<td>{{ payment.statement_descriptor }}</td>
+									</tr>
+									<tr v-show="payment.description">
+										<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
+										<td>{{ payment.description }}</td>
+									</tr>
+									<tr v-show="payment.canceled_at">
+										<th><?php echo Text::_('COM_STRIPELA_CANCELED_AT'); ?></th>
+										<td>{{ payment.canceled_at }}</td>
+									</tr>
+									<tr v-show="payment.cancellation_reason">
+										<th><?php echo Text::_('COM_STRIPELA_CANCELATION_REASON'); ?></th>
+										<td>{{ payment.cancellation_reason }}</td>
+									</tr>
+								</tbody>
 							</template>
 						</v-simple-table>
 					</v-card-text>

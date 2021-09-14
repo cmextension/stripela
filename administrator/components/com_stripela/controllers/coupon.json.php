@@ -85,6 +85,24 @@ class StripelaControllerCoupon extends StripelaControllerBase
 		{
 			foreach ($response->data as $coupon)
 			{
+				try {
+					$promotionCodes = $stripe->promotionCodes->all([
+						'coupon' => $coupon->id,
+						'expand' => ['data.customer']
+					]);
+				} catch (Exception $e) {
+					echo new JsonResponse(null, $e->getMessage(), true);
+		
+					return false;
+				}
+
+				$codeCount = 0;
+
+				foreach ($promotionCodes->autoPagingIterator() as $pc)
+				{
+					$codeCount++;
+				}
+
 				$terms = HTMLHelper::_('stripela.terms',
 					$coupon->amount_off,
 					$coupon->percent_off,
@@ -102,6 +120,7 @@ class StripelaControllerCoupon extends StripelaControllerBase
 					'max_redemptions'	=> $coupon->max_redemptions,
 					'valid'				=> $coupon->valid,
 					'redeem_by'			=> $redeemBy,
+					'promotion_codes'	=> $codeCount,
 					'created'			=> HTMLHelper::_('stripela.date', $coupon->created),
 				];
 			}
@@ -180,6 +199,63 @@ class StripelaControllerCoupon extends StripelaControllerBase
 			return false;
 		}
 
+		try {
+			$promotionCodes = $stripe->promotionCodes->all([
+				'coupon' => $r->id,
+				'expand' => ['data.customer']
+			]);
+		} catch (Exception $e) {
+			echo new JsonResponse(null, $e->getMessage(), true);
+
+			return false;
+		}
+
+		$codes = [];
+
+		foreach ($promotionCodes->autoPagingIterator() as $pc)
+		{
+			$expiresAt = $pc->expires_at ? HTMLHelper::_('stripela.date', $pc->expires_at) : null;
+			$firstTimeTransaction = isset($pc->restrictions->first_time_transaction) ?
+				$pc->restrictions->first_time_transaction : null;
+
+			$customerName = null;
+			$customerEmail = null;
+			$minimumAmount = null;
+
+			if (isset($pc->restrictions->minimum_amount))
+			{
+				$minimumAmount = HTMLHelper::_('stripela.amount',
+					$pc->restrictions->minimum_amount,
+					$pc->restrictions->minimum_amount_currency,
+					true
+				);
+			}
+
+			if (isset($pc->customer->name))
+			{
+				$customerName = $pc->customer->name;
+			}
+
+			if (isset($pc->customer->email))
+			{
+				$customerEmail = $pc->customer->email;
+			}
+
+			$codes[] = [
+				'id'						=> $pc->id,
+				'code'						=> $pc->code,
+				'active'					=> $pc->active,
+				'customer_name'				=> $customerName,
+				'customer_email'			=> $customerEmail,
+				'expires_at'				=> $expiresAt,
+				'max_redemptions'			=> $pc->max_redemptions,
+				'metadata'					=> $pc->metadata,
+				'first_time_transaction'	=> $firstTimeTransaction,
+				'minimum_amount'			=> $minimumAmount,
+				'times_redeemed'			=> $pc->times_redeemed,
+			];
+		}
+
 		$terms = HTMLHelper::_('stripela.terms',
 			$r->amount_off,
 			$r->percent_off,
@@ -196,6 +272,7 @@ class StripelaControllerCoupon extends StripelaControllerBase
 			'terms'				=> $terms,
 			'max_redemptions'	=> $r->max_redemptions,
 			'valid'				=> $r->valid,
+			'promotion_codes'	=> $codes,
 			'redeem_by'			=> $redeemBy,
 			'created'			=> HTMLHelper::_('stripela.date', $r->created),
 		];

@@ -154,7 +154,7 @@ use Joomla\CMS\Language\Text;
 		<div v-show="!loadingList">
 			<v-dialog
 				v-model="dialog"
-				width="600px"
+				width="800px"
 			>
 				<v-card>
 					<v-card-title>
@@ -178,34 +178,99 @@ use Joomla\CMS\Language\Text;
 
 						<v-simple-table v-if="coupon !== null">
 							<template v-slot:default>
-							<tbody>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
-									<td>{{ coupon.id }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
-									<td>{{ coupon.name }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_TERMS'); ?></th>
-									<td>{{ coupon.terms }}</td>
-								</tr>
-								<tr v-show="coupon.max_redemptions">
-									<th><?php echo Text::_('COM_STRIPELA_MAX_REDEMPTIONS'); ?></th>
-									<td>{{ coupon.max_redemptions }}</td>
-								</tr>
-								<tr v-show="coupon.redeem_by">
-									<th><?php echo Text::_('COM_STRIPELA_REDEEM_BY'); ?></th>
-									<td>{{ coupon.redeem_by }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
-									<td>{{ coupon.created }}</td>
-								</tr>
-							</tbody>
+								<tbody>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
+										<td>{{ coupon.id }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
+										<td>{{ coupon.name }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_TERMS'); ?></th>
+										<td>{{ coupon.terms }}</td>
+									</tr>
+									<tr v-show="coupon.max_redemptions">
+										<th><?php echo Text::_('COM_STRIPELA_MAX_REDEMPTIONS'); ?></th>
+										<td>{{ coupon.max_redemptions }}</td>
+									</tr>
+									<tr v-show="coupon.redeem_by">
+										<th><?php echo Text::_('COM_STRIPELA_REDEEM_BY'); ?></th>
+										<td>{{ coupon.redeem_by }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
+										<td>{{ coupon.created }}</td>
+									</tr>
+								</tbody>
 							</template>
 						</v-simple-table>
+
+						<div v-if="coupon !== null && coupon.promotion_codes.length > 0">
+							<span class="text-h6">
+								<?php echo Text::_('COM_STRIPELA_PROMOTION_CODES'); ?>
+							</span>
+
+							<div v-for="code in coupon.promotion_codes" :key="code.id">
+								<strong>{{ code.code }}</strong>
+								<v-simple-table>
+									<template v-slot:default>
+										<tbody>
+											<tr>
+												<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
+												<td>{{ code.id }}</td>
+											</tr>
+											<tr>
+												<th><?php echo Text::_('COM_STRIPELA_ACTIVE'); ?></th>
+												<td>
+													<v-icon v-if="code.valid">fas fa-check</v-icon>
+													<v-icon v-else>fas fa-times</v-icon>
+												</td>
+											</tr>
+											<tr v-show="code.customer_name || code.customer_email">
+												<th><?php echo Text::_('COM_STRIPELA_CUSTOMER'); ?></th>
+												<td>
+													<div v-if="code.customer_name && code.customer_email">
+														{{ code.customer_name }} ({{ code.customer_email }})
+													</div>
+													<div v-else-if="code.customer_name && !code.customer_email">
+														{{ code.customer_name }}
+													</div>
+													<div v-else>
+														{{ code.customer_email }}
+													</div>
+												</td>
+											</tr>
+											<tr v-show="code.expires_at">
+												<th><?php echo Text::_('COM_STRIPELA_EXPIRES_AT'); ?></th>
+												<td>{{ code.expires_at }}</td>
+											</tr>
+											<tr v-show="code.first_time_transaction">
+												<th><?php echo Text::_('COM_STRIPELA_FIRST_TIME_TRANSACTION'); ?></th>
+												<td>
+													<v-icon v-if="code.first_time_transaction">fas fa-check</v-icon>
+													<v-icon v-else>fas fa-times</v-icon>
+												</td>
+											</tr>
+											<tr v-show="code.minimum_amount">
+												<th><?php echo Text::_('COM_STRIPELA_MINIMUM_AMOUNT'); ?></th>
+												<td>{{ code.minimum_amount }}</td>
+											</tr>
+											<tr v-show="code.max_redemptions">
+												<th><?php echo Text::_('COM_STRIPELA_MAX_REDEMPTIONS'); ?></th>
+												<td>{{ code.max_redemptions }}</td>
+											</tr>
+											<tr>
+												<th><?php echo Text::_('COM_STRIPELA_REDEMPTIONS'); ?></th>
+												<td>{{ code.times_redeemed }}</td>
+											</tr>
+										</tbody>
+									</template>
+								</v-simple-table>
+							</div>
+						</div>
+
 					</v-card-text>
 					<v-card-actions>
 						<v-spacer></v-spacer>
@@ -310,6 +375,7 @@ use Joomla\CMS\Language\Text;
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_MAX_REDEMPTIONS'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_REDEEM_BY'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_VALID'); ?></th>
+							<th class="text-left"><?php echo Text::_('COM_STRIPELA_PROMOTION_CODES'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
 							<th></th>
 						</tr>
@@ -324,6 +390,7 @@ use Joomla\CMS\Language\Text;
 								<v-icon v-if="item.valid">fas fa-check</v-icon>
 								<v-icon v-else>fas fa-times</v-icon>
 							</td>
+							<td>{{ item.promotion_codes }}</td>
 							<td>{{ item.created }}</td>
 							<td>
 								<v-btn

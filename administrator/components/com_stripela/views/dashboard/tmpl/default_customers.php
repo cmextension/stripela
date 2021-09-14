@@ -156,40 +156,40 @@ use Joomla\CMS\Language\Text;
 
 						<v-simple-table v-if="customer">
 							<template v-slot:default>
-							<tbody>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
-									<td>{{ customer.id }}</td>
-								</tr>
-								<tr v-show="customer.name">
-									<th><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
-									<td>{{ customer.name }}</td>
-								</tr>
-								<tr v-show="customer.email">
-									<th><?php echo Text::_('COM_STRIPELA_EMAIL'); ?></th>
-									<td>{{ customer.email }}</td>
-								</tr>
-								<tr v-show="customer.description">
-									<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
-									<td>{{ customer.description }}</td>
-								</tr>
-								<tr v-show="customer.currency">
-									<th><?php echo Text::_('COM_STRIPELA_CURRENCY'); ?></th>
-									<td>{{ customer.currency }}</td>
-								</tr>
-								<tr v-show="customer.address">
-									<th><?php echo Text::_('COM_STRIPELA_ADDRESS'); ?></th>
-									<td>{{ customer.address }}</td>
-								</tr>
-								<tr v-show="customer.phone">
-									<th><?php echo Text::_('COM_STRIPELA_PHONE'); ?></th>
-									<td>{{ customer.phone }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
-									<td>{{ customer.created }}</td>
-								</tr>
-							</tbody>
+								<tbody>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
+										<td>{{ customer.id }}</td>
+									</tr>
+									<tr v-show="customer.name">
+										<th><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
+										<td>{{ customer.name }}</td>
+									</tr>
+									<tr v-show="customer.email">
+										<th><?php echo Text::_('COM_STRIPELA_EMAIL'); ?></th>
+										<td>{{ customer.email }}</td>
+									</tr>
+									<tr v-show="customer.description">
+										<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
+										<td>{{ customer.description }}</td>
+									</tr>
+									<tr v-show="customer.currency">
+										<th><?php echo Text::_('COM_STRIPELA_CURRENCY'); ?></th>
+										<td>{{ customer.currency }}</td>
+									</tr>
+									<tr v-show="customer.address">
+										<th><?php echo Text::_('COM_STRIPELA_ADDRESS'); ?></th>
+										<td>{{ customer.address }}</td>
+									</tr>
+									<tr v-show="customer.phone">
+										<th><?php echo Text::_('COM_STRIPELA_PHONE'); ?></th>
+										<td>{{ customer.phone }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
+										<td>{{ customer.created }}</td>
+									</tr>
+								</tbody>
 							</template>
 						</v-simple-table>
 					</v-card-text>

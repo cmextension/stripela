@@ -155,66 +155,66 @@ use Joomla\CMS\Language\Text;
 
 						<v-simple-table v-if="product">
 							<template v-slot:default>
-							<tbody>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
-									<td>{{ product.id }}</td>
-								</tr>
-								<tr v-show="product.name">
-									<th><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
-									<td>{{ product.name }}</td>
-								</tr>
-								<tr v-show="product.description">
-									<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
-									<td>{{ product.description }}</td>
-								</tr>
-								<tr v-show="product.images.length > 0">
-									<th><?php echo Text::_('COM_STRIPELA_IMAGES'); ?></th>
-									<td>
-										<div v-for="i in product.images">
-											<v-img v-bind:src="i" :width="150"></v-img>
-										</div>
-									</td>
-								</tr>
-								<tr v-show="product.metadata.length > 0">
-									<th><?php echo Text::_('COM_STRIPELA_METADATA'); ?></th>
-									<td>
-										<div v-for="(value, key) in product.metadata">
-											{{ key }}: {{ value }}
-										</div>
-									</td>
-								</tr>
-								<tr v-show="product.pricing.length > 0">
-									<th><?php echo Text::_('COM_STRIPELA_PRICING'); ?></th>
-									<td>
-										<div v-for="(p, index) in product.pricing">
-											{{ p }}
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_ACTIVE'); ?></th>
-									<td>
-										<v-icon v-if="product.active">fas fa-check</v-icon>
-										<v-icon v-else>fas fa-times</v-icon>
-									</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_SHIPPABLE'); ?></th>
-									<td>
-										<v-icon v-if="product.shippable">fas fa-check</v-icon>
-										<v-icon v-else>fas fa-times</v-icon>
-									</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
-									<td>{{ product.created }}</td>
-								</tr>
-								<tr>
-									<th><?php echo Text::_('COM_STRIPELA_UPDATED'); ?></th>
-									<td>{{ product.updated }}</td>
-								</tr>
-							</tbody>
+								<tbody>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_ID'); ?></th>
+										<td>{{ product.id }}</td>
+									</tr>
+									<tr v-show="product.name">
+										<th><?php echo Text::_('COM_STRIPELA_NAME'); ?></th>
+										<td>{{ product.name }}</td>
+									</tr>
+									<tr v-show="product.description">
+										<th><?php echo Text::_('COM_STRIPELA_DESCRIPTION'); ?></th>
+										<td>{{ product.description }}</td>
+									</tr>
+									<tr v-show="product.images.length > 0">
+										<th><?php echo Text::_('COM_STRIPELA_IMAGES'); ?></th>
+										<td>
+											<div v-for="i in product.images">
+												<v-img v-bind:src="i" :width="150"></v-img>
+											</div>
+										</td>
+									</tr>
+									<tr v-show="product.metadata.length > 0">
+										<th><?php echo Text::_('COM_STRIPELA_METADATA'); ?></th>
+										<td>
+											<div v-for="(value, key) in product.metadata">
+												{{ key }}: {{ value }}
+											</div>
+										</td>
+									</tr>
+									<tr v-show="product.pricing.length > 0">
+										<th><?php echo Text::_('COM_STRIPELA_PRICING'); ?></th>
+										<td>
+											<div v-for="(p, index) in product.pricing">
+												{{ p }}
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_ACTIVE'); ?></th>
+										<td>
+											<v-icon v-if="product.active">fas fa-check</v-icon>
+											<v-icon v-else>fas fa-times</v-icon>
+										</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_SHIPPABLE'); ?></th>
+										<td>
+											<v-icon v-if="product.shippable">fas fa-check</v-icon>
+											<v-icon v-else>fas fa-times</v-icon>
+										</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
+										<td>{{ product.created }}</td>
+									</tr>
+									<tr>
+										<th><?php echo Text::_('COM_STRIPELA_UPDATED'); ?></th>
+										<td>{{ product.updated }}</td>
+									</tr>
+								</tbody>
 							</template>
 						</v-simple-table>
 					</v-card-text>
