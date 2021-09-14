@@ -100,6 +100,7 @@ class StripelaControllerCoupon extends StripelaControllerBase
 					'name'				=> $coupon->name,
 					'terms'				=> $terms,
 					'max_redemptions'	=> $coupon->max_redemptions,
+					'valid'				=> $coupon->valid,
 					'redeem_by'			=> $redeemBy,
 					'created'			=> HTMLHelper::_('stripela.date', $coupon->created),
 				];
@@ -194,6 +195,7 @@ class StripelaControllerCoupon extends StripelaControllerBase
 			'name'				=> $r->name,
 			'terms'				=> $terms,
 			'max_redemptions'	=> $r->max_redemptions,
+			'valid'				=> $r->valid,
 			'redeem_by'			=> $redeemBy,
 			'created'			=> HTMLHelper::_('stripela.date', $r->created),
 		];

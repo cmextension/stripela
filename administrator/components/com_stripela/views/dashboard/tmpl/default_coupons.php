@@ -309,6 +309,7 @@ use Joomla\CMS\Language\Text;
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_TERMS'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_MAX_REDEMPTIONS'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_REDEEM_BY'); ?></th>
+							<th class="text-left"><?php echo Text::_('COM_STRIPELA_VALID'); ?></th>
 							<th class="text-left"><?php echo Text::_('COM_STRIPELA_CREATED'); ?></th>
 							<th></th>
 						</tr>
@@ -319,6 +320,10 @@ use Joomla\CMS\Language\Text;
 							<td>{{ item.terms }}</td>
 							<td>{{ item.max_redemptions }}</td>
 							<td>{{ item.redeem_by }}</td>
+							<td>
+								<v-icon v-if="item.valid">fas fa-check</v-icon>
+								<v-icon v-else>fas fa-times</v-icon>
+							</td>
 							<td>{{ item.created }}</td>
 							<td>
 								<v-btn
