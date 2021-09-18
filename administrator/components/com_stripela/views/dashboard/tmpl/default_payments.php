@@ -241,7 +241,7 @@ use Joomla\CMS\Language\Text;
 				>
 					<v-text-field
 						v-model="filter_customer"
-						label="Customer ID"
+						label="<?php Text::_('COM_STRIPELA_CUSTOMER_ID'); ?>"
 						prepend-icon="fas fa-user fa-fw"
 					></v-text-field>
 				</v-col>
