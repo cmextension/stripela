@@ -134,7 +134,8 @@ use Joomla\CMS\Language\Text;
 		<div v-show="!loadingList">
 			<v-dialog
 				v-model="dialog"
-				width="600px"
+				width="800px"
+				style='z-index: 2001;'
 			>
 				<v-card>
 					<v-card-title>

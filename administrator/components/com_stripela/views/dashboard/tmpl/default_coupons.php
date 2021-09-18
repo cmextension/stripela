@@ -155,6 +155,7 @@ use Joomla\CMS\Language\Text;
 			<v-dialog
 				v-model="dialog"
 				width="800px"
+				style='z-index: 2001;'
 			>
 				<v-card>
 					<v-card-title>

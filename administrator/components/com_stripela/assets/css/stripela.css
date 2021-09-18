@@ -18,10 +18,3 @@
     font-size: inherit;
 }
 
-.v-dialog__content {
-    z-index: 2001 !important;
-}
-
-.v-overlay {
-    z-index: 2000 !important;
-}
