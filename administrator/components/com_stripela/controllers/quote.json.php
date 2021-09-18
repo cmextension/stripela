@@ -18,20 +18,20 @@ use Joomla\CMS\HTML\HTMLHelper;
 require_once __DIR__ . '/base.php';
 
 /**
- * Controller for payment intent.
+ * Controller for quote.
  *
  * @package     Stripela
  * @subpackage  com_stripela
  * @since       1.0.0
  */
-class StripelaControllerPayment extends StripelaControllerBase
+class StripelaControllerQuote extends StripelaControllerBase
 {
 	/**
-	 * Get payments.
+	 * Get quotes.
 	 *
 	 * @since  1.0.0
 	 */
-	public function getPayments()
+	public function getQuotes()
 	{
 		$data = [];
 
@@ -42,9 +42,10 @@ class StripelaControllerPayment extends StripelaControllerBase
 		$input = $this->input;
 		$startingAfter = $input->get('starting_after');
 		$endingBefore = $input->get('ending_before');
-		$customerId = $input->get('customer');
 		$from = $input->get('from');
 		$to = $input->get('to');
+		$customerId = $input->get('customer');
+		$status = $input->get('status');
 
 		$stripe = new \Stripe\StripeClient($secretKey);
 
@@ -52,6 +53,8 @@ class StripelaControllerPayment extends StripelaControllerBase
 			'limit'		=> $limit,
 			'expand'	=> ['data.customer'],
 		];
+
+		$validStatuses = ['draft', 'open', 'accepted', 'canceled'];
 
 		if ($startingAfter)
 			$params['starting_after'] = $startingAfter;
@@ -61,6 +64,9 @@ class StripelaControllerPayment extends StripelaControllerBase
 
 		if ($customerId)
 			$params['customer'] = $customerId;
+
+		if ($status && in_array($status, $validStatuses))
+			$params['status'] = $status;
 
 		if ($from || $to)
 		{
@@ -74,40 +80,49 @@ class StripelaControllerPayment extends StripelaControllerBase
 		}
 
 		try {
-			$response = $stripe->paymentIntents->all($params);
+			$response = $stripe->quotes->all($params);
 		} catch (Exception $e) {
 			echo new JsonResponse(null, $e->getMessage(), true);
 
 			return false;
 		}
 
-		$payments = [];
+		$quotes = [];
 		$newStartingAfter = '';
 		$newEndingBefore = '';
 
 		if (count($response->data) > 0)
 		{
-			$zeroDecimalCurrencies = StripelaHelper::getZeroDecimalCurrencies();
-
-			foreach ($response->data as $payment)
+			foreach ($response->data as $quote)
 			{
-				$customer = !empty($payment->customer['name']) ? $payment->customer['name'] : $payment->customer['email'];
-				$amount = HTMLHelper::_('stripela.amount', $payment->amount, $payment->currency);
+				$amountTotal = HTMLHelper::_('stripela.amount',
+					$quote->amount_total,
+					$quote->currency,
+					true
+				);
 
-				$payments[] = [
-					'id'				=> $payment->id,
-					'amount'			=> $amount,
-					'currency'			=> strtoupper($payment->currency),
-					'status'			=> $payment->status,
-					'status_formatted'	=> Text::_('COM_STRIPELA_PAYMENT_STATUS_' . strtoupper($payment->status)),
-					'description'		=> $payment->description,
-					'customer'			=> $customer,
-					'created'			=> HTMLHelper::_('stripela.date', $payment->created),
+				$customer = '';
+
+				if (isset($quote->customer->name))
+					$customer = $quote->customer->name;
+				elseif (isset($quote->customer->email))
+					$customer = $quote->customer->email;
+
+				$expiresAt = $quote->expires_at ? HTMLHelper::_('stripela.date', $quote->expires_at) : null;
+
+				$quotes[] = [
+					'id'			=> $quote->id,
+					'amount_total'	=> $amountTotal,
+					'status'		=> Text::_('COM_STRIPELA_QUOTE_' . strtoupper($quote->status)),
+					'number'		=> $quote->number,
+					'customer'		=> $customer,
+					'expires_at'	=> $expiresAt,
+					'created'		=> HTMLHelper::_('stripela.date', $quote->created),
 				];
 			}
 
-			$first = $payments[0];
-			$last = $payments[count($payments) - 1];
+			$first = $quotes[0];
+			$last = $quotes[count($quotes) - 1];
 
 			// First page.
 			if (!$startingAfter && !$endingBefore && $response->has_more)
@@ -141,7 +156,7 @@ class StripelaControllerPayment extends StripelaControllerBase
 				$newEndingBefore = $startingAfter;
 		}
 
-		$data['items'] = $payments;
+		$data['items'] = $quotes;
 		$data['starting_after'] = $newStartingAfter;
 		$data['ending_before'] = $newEndingBefore;
 		
@@ -151,21 +166,21 @@ class StripelaControllerPayment extends StripelaControllerBase
 	}
 
 	/**
-	 * Get payment detail.
+	 * Get quote detail.
 	 *
 	 * @since  1.0.0
 	 */
-	public function getPayment()
+	public function getQuote()
 	{
 		$config = ComponentHelper::getParams('com_stripela');
 		$secretKey = $config->get('stripe_secret_key');
 
 		$input = $this->input;
-		$paymentId = $input->get('id');
+		$quoteId = $input->get('id');
 
-		if (empty($paymentId))
+		if (empty($quoteId))
 		{
-			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PAYMENT_IDS'), true);
+			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_QUOTE_IDS'), true);
 
 			return false;
 		}
@@ -173,8 +188,8 @@ class StripelaControllerPayment extends StripelaControllerBase
 		$stripe = new \Stripe\StripeClient($secretKey);
 
 		try {
-			$r = $stripe->paymentIntents->retrieve($paymentId, [
-				'expand' => ['customer', 'payment_method']
+			$r = $stripe->quotes->retrieve($quoteId, [
+				'expand' => ['customer']
 			]);
 		} catch (Exception $e) {
 			echo new JsonResponse(null, $e->getMessage(), true);
@@ -182,37 +197,33 @@ class StripelaControllerPayment extends StripelaControllerBase
 			return false;
 		}
 
-		$amount = HTMLHelper::_('stripela.amount', $r->amount, $r->currency, true);
+		$amountTotal = HTMLHelper::_('stripela.amount',
+			$r->amount_total,
+			$r->currency,
+			true
+		);
 
-		$paymentMethod = isset($r->payment_method->type) ?
-			Text::_('COM_STRIPELA_PAYMENT_METHOD_' . strtoupper($r->payment_method->type)) : '';
 		$customer = '';
-		$canceledAt = '';
-		
+
 		if (isset($r->customer->name))
 			$customer = $r->customer->name;
 		elseif (isset($r->customer->email))
 			$customer = $r->customer->email;
 
-		if ($r->canceled_at)
-			$canceledAt = HTMLHelper::_('stripela.date', $r->canceled_at);
+		$expiresAt = $r->expires_at ? HTMLHelper::_('stripela.date', $r->expires_at) : null;
 
-		$payment = [
-			'id'					=> $r->id,
-			'amount'				=> $amount,
-			'currency'				=> strtoupper($r->currency),
-			'status'				=> $r->status,
-			'status_formatted'		=> Text::_('COM_STRIPELA_PAYMENT_STATUS_' . strtoupper($r->status)),
-			'created'				=> HTMLHelper::_('stripela.date', $r->created),
-			'customer'				=> $customer,
-			'payment_method'		=> $paymentMethod,
-			'statement_descriptor'	=> $r->statement_descriptor,
-			'description'			=> $r->description,
-			'canceled_at'			=> $canceledAt,
-			'cancellation_reason'	=> $r->cancellation_reason,
+		$quote = [
+			'id'			=> $r->id,
+			'amount_total'	=> $amountTotal,
+			'status'		=> Text::_('COM_STRIPELA_QUOTE_' . strtoupper($r->status)),
+			'number'		=> $r->number,
+			'customer'		=> $customer,
+			'metadata'		=> $r->metadata,
+			'expires_at'	=> $expiresAt,
+			'created'		=> HTMLHelper::_('stripela.date', $r->created),
 		];
 
-		echo new JsonResponse($payment);
+		echo new JsonResponse($quote);
 
 		return true;
 	}

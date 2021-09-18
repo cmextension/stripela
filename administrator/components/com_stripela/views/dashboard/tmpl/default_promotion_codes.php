@@ -98,7 +98,7 @@ use Joomla\CMS\Language\Text;
 					url += '&code=' + _this.filter_code
 
 				if (_this.filter_customer)
-					url += '&customer_id=' + _this.filter_customer
+					url += '&customer=' + _this.filter_customer
 
 				if (_this.filter_from)
 					url += '&from=' + _this.filter_from

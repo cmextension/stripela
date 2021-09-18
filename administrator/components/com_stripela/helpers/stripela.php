@@ -66,13 +66,6 @@ class StripelaHelper
 		];
 
 		$components[] = [
-			'route'		=> '#/discounts',
-			'icon'		=> 'fa-percent',
-			'layout'	=> 'discounts',
-			'name'		=> Text::_('COM_STRIPELA_DISCOUNTS'),
-		];
-
-		$components[] = [
 			'route'		=> '#/quotes',
 			'icon'		=> 'fa-file-alt',
 			'layout'	=> 'quotes',

@@ -86,7 +86,7 @@ use Joomla\CMS\Language\Text;
 					url +=  '&starting_after=' + _this.starting_after
 
 				if (_this.filter_customer)
-					url += '&customer_id=' + _this.filter_customer
+					url += '&customer=' + _this.filter_customer
 
 				if (_this.filter_from)
 					url += '&from=' + _this.filter_from
@@ -241,7 +241,7 @@ use Joomla\CMS\Language\Text;
 				>
 					<v-text-field
 						v-model="filter_customer"
-						label="<?php Text::_('COM_STRIPELA_CUSTOMER_ID'); ?>"
+						label="<?php echo Text::_('COM_STRIPELA_CUSTOMER_ID'); ?>"
 						prepend-icon="fas fa-user fa-fw"
 					></v-text-field>
 				</v-col>

@@ -44,7 +44,7 @@ class StripelaControllerPromotionCode extends StripelaControllerBase
 		$endingBefore = $input->get('ending_before');
 		$active = $input->get('active');
 		$code = $input->get('code');
-		$customerId = $input->get('customer_id');
+		$customerId = $input->get('customer');
 		$from = $input->get('from');
 		$to = $input->get('to');
 
@@ -176,7 +176,7 @@ class StripelaControllerPromotionCode extends StripelaControllerBase
 
 		if (empty($codeId))
 		{
-			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PAYMENT_IDS'), true);
+			echo new JsonResponse(null, Text::_('COM_STRIPELA_NO_PROMOTION_CODE_IDS'), true);
 
 			return false;
 		}

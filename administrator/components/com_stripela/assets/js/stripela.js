@@ -7,7 +7,6 @@ window.onload = function() {
     { path: '/products', component: Products },
     { path: '/coupons', component: Coupons },
     { path: '/promotion-codes', component: PromotionCodes },
-    { path: '/discounts', component: Discounts },
     { path: '/quotes', component: Quotes },
     { path: '/invoices', component: Invoices },
     { path: '/plans', component: Plans },
