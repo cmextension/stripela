@@ -118,13 +118,6 @@ class StripelaControllerInvoice extends StripelaControllerBase
 					true
 				);
 
-				$customer = '';
-
-				if (isset($invoice->customer->name))
-					$customer = $invoice->customer->name;
-				elseif (isset($invoice->customer->email))
-					$customer = $invoice->customer->email;
-
 				$dueDate = $invoice->due_date ? HTMLHelper::_('stripela.date', $invoice->due_date) : null;
 
 				$invoices[] = [
