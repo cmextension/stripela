@@ -109,7 +109,7 @@ abstract class JHtmlStripela
 	}
 
 	/**
-	 * Show recurring package pricing info.
+	 * Show recurring package pricing info. Use "every".
 	 *
 	 * @param   float     $unitAmount      Per unit price.
 	 * @param   string    $currency        Currency code.
@@ -135,6 +135,34 @@ abstract class JHtmlStripela
 		}
 
 		return Text::sprintf('COM_STRIPELA_RECURRING_PACKAGE_INFO', $unitPrice, $group, $intervalStr);
+	}
+
+	/**
+	 * Show recurring package pricing info. Use "/".
+	 *
+	 * @param   float     $unitAmount      Per unit price.
+	 * @param   string    $currency        Currency code.
+	 * @param   integer   $intervalCount   Number of intervals.
+	 * @param   string    $interval        Frequency at which a subscription is billed.
+	 *
+	 * @return  string
+	 *
+	 * @since   1.0.0
+	 */
+	public static function recurring_package_info_2($unitAmount, $currency, $intervalCount, $interval)
+	{
+		$unitPrice = self::amount($unitAmount, $currency, true);
+
+		if ($intervalCount == 1)
+		{
+			$intervalStr = Text::_('COM_STRIPELA_INTERVAL_'. $interval);
+		}
+		else
+		{
+			$intervalStr = Text::sprintf('COM_STRIPELA_INTERVAL_EVERY_'. $interval . '_2', $intervalCount);
+		}
+
+		return Text::sprintf('COM_STRIPELA_RECURRING_PACKAGE_INFO_2', $unitPrice, $intervalStr);
 	}
 
 	/**
