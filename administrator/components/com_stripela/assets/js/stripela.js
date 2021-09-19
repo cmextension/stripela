@@ -9,7 +9,6 @@ window.onload = function() {
     { path: '/promotion-codes', component: PromotionCodes },
     { path: '/quotes', component: Quotes },
     { path: '/invoices', component: Invoices },
-    { path: '/plans', component: Plans },
     { path: '/subscriptions', component: Subscriptions },
     { path: '*', component: Payments }
   ]

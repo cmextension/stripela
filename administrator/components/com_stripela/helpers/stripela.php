@@ -80,13 +80,6 @@ class StripelaHelper
 		];
 
 		$components[] = [
-			'route'		=> '#/plans',
-			'icon'		=> 'fa-th-list',
-			'layout'	=> 'plans',
-			'name'		=> Text::_('COM_STRIPELA_PLANS'),
-		];
-
-		$components[] = [
 			'route'		=> '#/subscriptions',
 			'icon'		=> 'fa-address-book',
 			'layout'	=> 'subscriptions',
