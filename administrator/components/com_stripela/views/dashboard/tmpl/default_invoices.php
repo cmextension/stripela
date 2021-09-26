@@ -414,6 +414,8 @@ use Joomla\CMS\Language\Text;
 						<v-date-picker
 							v-model="filter_due_date_from"
 							@input="filter_due_date_from_menu = false"
+							next-icon="fa fa-chevron-right"
+							prev-icon="fa fa-chevron-left"
 						></v-date-picker>
 					</v-menu>
 				</v-col>
@@ -445,6 +447,8 @@ use Joomla\CMS\Language\Text;
 						<v-date-picker
 							v-model="filter_due_date_to"
 							@input="filter_due_date_to_menu = false"
+							next-icon="fa fa-chevron-right"
+							prev-icon="fa fa-chevron-left"
 						></v-date-picker>
 					</v-menu>
 				</v-col>
@@ -478,6 +482,8 @@ use Joomla\CMS\Language\Text;
 						<v-date-picker
 							v-model="filter_from"
 							@input="filter_from_menu = false"
+							next-icon="fa fa-chevron-right"
+							prev-icon="fa fa-chevron-left"
 						></v-date-picker>
 					</v-menu>
 				</v-col>
@@ -509,6 +515,8 @@ use Joomla\CMS\Language\Text;
 						<v-date-picker
 							v-model="filter_to"
 							@input="filter_to_menu = false"
+							next-icon="fa fa-chevron-right"
+							prev-icon="fa fa-chevron-left"
 						></v-date-picker>
 					</v-menu>
 				</v-col>
