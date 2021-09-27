@@ -15,7 +15,7 @@ Stripela is a simple Joomla! 4 component using Stripe API to give you access to 
 
 Stripela is available in the main menu of Joomla! administration, under `Components` section.
 
-To configure Stripe, access Stripela from the main menu and click `Options` button near the top right corner of the page. In the configuration form, you provide your Stripe API secret key, you can configure date time format and pagination limit.
+To configure Stripe, access Stripela from the main menu and click `Options` button near the top right corner of the page. In the configuration form, you provide your Stripe API secret key, you can configure date time format and pagination limit. You can get your secret key from your [Stripe Dashboard](https://dashboard.stripe.com/apikeys).
 
 ## Improvements and contribution
 
